@@ -21,17 +21,17 @@ sql = SQLHelper()
 def index():
     return render_template("home.html")
 
-# @app.route("/dashboard")
-# def dashboard():
-#     return render_template("dashboard.html")
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
 
 @app.route("/map")
 def map():
     return render_template("map.html")
 
-# @app.route("/about_us")
-# def about_us():
-#     return render_template("about_us.html")
+@app.route("/about_us")
+def about_us():
+    return render_template("about_us.html")
 
 # SQL Queries
 @app.route("/api/v1.0/get_dashboard/<user_year>/<user_state>")
