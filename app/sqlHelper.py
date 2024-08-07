@@ -15,139 +15,146 @@ class SQLHelper():
 
     # define properties
     def __init__(self):
-        self.engine = create_engine("sqlite:///spacex.sqlite")
-        # self.Base = None
-
-        # automap Base classes
-        # self.init_base()
-
-    # COMMENT BACK IN IF USING THE ORM
-
-    # def init_base(self):
-    #     # reflect an existing database into a new model
-    #     self.Base = automap_base()
-    #     # reflect the tables
-    #     self.Base.prepare(autoload_with=self.engine)
+        self.engine = create_engine("sqlite:///tornadoes_clean.sqlite")
 
     #################################################
     # Database Queries
     #################################################
 
-    # USING RAW SQL
-    def get_bar(self, min_attempts, region):
-
-        # switch on user_region
-        if region == 'All':
-            where_clause = "and 1=1"
+    def get_bar(self, user_year, user_state):
+    # switch on user_region
+        if user_year != -1:
+            if user_state != 'All':
+                where_clause = f"""yr = {user_year} 
+                AND state LIKE '{user_state}'"""
+            else:
+                where_clause = f"yr = {user_year}"
         else:
-            where_clause = f"and region = '{region}'"
+            if user_state != 'All':
+                where_clause = f"state LIKE '{user_state}'"
+            else:
+                where_clause = f"yr >= 2000"
 
         # build the query
         query = f"""
             SELECT
-                name,
-                full_name,
-                region,
-                launch_attempts,
-                launch_successes
+                yr,
+                state,
+                count(category) as "count"
             FROM
-                launchpads
+                tornadoes
             WHERE
-                launch_attempts >= {min_attempts}
                 {where_clause}
+            GROUP BY
+                yr,
+                state
             ORDER BY
-                launch_attempts DESC;
+                count DESC;
         """
 
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)
 
-    def get_pie(self, min_attempts, region):
+    def get_pie(self, user_year, user_state):
 
-        # switch on user_region
-        if region == 'All':
-            where_clause = "and 1=1"
+         # switch on user_region
+        if user_year != -1:
+            if user_state != 'All':
+                where_clause = f"""yr = {user_year} 
+                AND state LIKE '{user_state}'"""
+            else:
+                where_clause = f"yr = {user_year}"
         else:
-            where_clause = f"and region = '{region}'"
+            if user_state != 'All':
+                where_clause = f"state LIKE '{user_state}'"
+            else:
+                where_clause = f"yr >= 2000"
 
         # build the query
         query = f"""
             SELECT
-                name,
-                region,
-                launch_attempts
+                yr,
+                state,
+                count(category) as "count"
             FROM
-                launchpads
+                tornadoes
             WHERE
-                launch_attempts >= {min_attempts}
                 {where_clause}
+            GROUP BY
+                yr,
+                state
             ORDER BY
-                launch_attempts DESC;
+                count DESC;
         """
 
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)
 
-    def get_table(self, min_attempts, region):
+    def get_table(self, user_year, user_state):
 
         # switch on user_region
-        if region == 'All':
-            where_clause = "and 1=1"
+        if user_year != -1:
+            if user_state != 'All':
+                where_clause = f"""yr = {user_year} 
+                AND state LIKE '{user_state}'"""
+            else:
+                where_clause = f"yr = {user_year}"
         else:
-            where_clause = f"and region = '{region}'"
+            if user_state != 'All':
+                where_clause = f"state LIKE '{user_state}'"
+            else:
+                where_clause = f"yr >= 2000"
 
         # build the query
         query = f"""
             SELECT
-                name,
-                full_name,
-                region,
-                latitude,
-                longitude,
-                launch_attempts,
-                launch_successes,
-                launch_attempts - launch_successes as launch_failures
+                yr,
+                state,
+                count(category) as "count"
             FROM
-                launchpads
+                tornadoes
             WHERE
-                launch_attempts >= {min_attempts}
                 {where_clause}
+            GROUP BY
+                yr,
+                state
             ORDER BY
-                launch_attempts DESC;
+                count DESC;
         """
 
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)
 
-    def get_map(self, min_attempts, region):
+    def get_map(self, year):
 
-        # switch on user_region
-        if region == 'All':
-            where_clause = "and 1=1"
+        # switch on user_year
+        if year != -1:
+            where_clause = f"yr = {year}"
         else:
-            where_clause = f"and region = '{region}'"
+            where_clause = f"yr > 2000"
 
         # build the query
         query = f"""
             SELECT
-                name,
-                full_name,
-                region,
-                latitude,
-                longitude,
-                launch_attempts,
-                launch_successes,
-                launch_attempts - launch_successes as launch_failures
+                yr,
+                state,
+                category,
+                loss,
+                start_lat,
+                start_longitude,
+                end_latitude,
+                end_longitude,
+                distance_traveled,
+                width
             FROM
-                launchpads
+                tornadoes
             WHERE
-                launch_attempts >= {min_attempts}
                 {where_clause}
             ORDER BY
-                launch_attempts DESC;
+                date DESC;
         """
 
         df = pd.read_sql(text(query), con = self.engine)

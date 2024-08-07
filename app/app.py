@@ -2,10 +2,13 @@ from flask import Flask, jsonify, render_template
 import pandas as pd
 import numpy as np
 from sqlHelper import SQLHelper
+import os
 
 #################################################
 # Flask Setup
 #################################################
+
+os.chdir(os.path.dirname(os.path.realpath(__file__)))
 app = Flask(__name__)
 sql = SQLHelper()
 
@@ -18,38 +21,38 @@ sql = SQLHelper()
 def index():
     return render_template("home.html")
 
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
+# @app.route("/dashboard")
+# def dashboard():
+#     return render_template("dashboard.html")
 
 @app.route("/map")
 def map():
     return render_template("map.html")
 
-@app.route("/about_us")
-def about_us():
-    return render_template("about_us.html")
+# @app.route("/about_us")
+# def about_us():
+#     return render_template("about_us.html")
 
 # SQL Queries
-@app.route("/api/v1.0/get_dashboard/<min_attempts>/<region>")
-def get_dashboard(min_attempts, region):
-    min_attempts = int(min_attempts) # cast to int
+@app.route("/api/v1.0/get_dashboard/<user_year>/<user_state>")
+def get_dashboard(user_year, user_state):
+    user_year = int(user_year) # cast to int
 
-    bar_data = sql.get_bar(min_attempts, region)
-    pie_data = sql.get_pie(min_attempts, region)
-    table_data = sql.get_table(min_attempts, region)
+    bar_data = sql.get_bar(user_year, user_state)
+    pie_data = sql.get_pie(user_year, user_state)
+    table_data = sql.get_table(user_year, user_state)
 
     data = {
         "bar_data": bar_data,
         "pie_data": pie_data,
-        "table_data": table_data
+        "table_data": table_data,
     }
     return(jsonify(data))
 
-@app.route("/api/v1.0/get_map/<min_attempts>/<region>")
-def get_map(min_attempts, region):
-    min_attempts = int(min_attempts) # cast to int
-    map_data = sql.get_map(min_attempts, region)
+@app.route("/api/map/<year>")
+def get_map(year):
+    year = int(year) # cast to int
+    map_data = sql.get_map(year)
 
     return(jsonify(map_data))
 
