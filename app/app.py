@@ -34,13 +34,12 @@ def about_us():
     return render_template("about_us.html")
 
 # SQL Queries
-@app.route("/api/v1.0/get_dashboard/<user_year>/<user_state>")
-def get_dashboard(user_year, user_state):
-    user_year = int(user_year) # cast to int
+@app.route("/api/v1.0/get_dashboard/<user_seasons>")
+def get_dashboard(user_seasons):
 
-    bar_data = sql.get_bar(user_year, user_state)
-    pie_data = sql.get_pie(user_year, user_state)
-    table_data = sql.get_table(user_year, user_state)
+    bar_data = sql.get_bar(user_seasons)
+    pie_data = sql.get_pie(user_seasons)
+    table_data = sql.get_table(user_seasons)
 
     data = {
         "bar_data": bar_data,

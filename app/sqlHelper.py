@@ -21,112 +21,97 @@ class SQLHelper():
     # Database Queries
     #################################################
 
-    def get_bar(self, user_year, user_state):
-    # switch on user_region
-        if user_year != -1:
-            if user_state != 'All':
-                where_clause = f"""yr = {user_year} 
-                AND state LIKE '{user_state}'"""
-            else:
-                where_clause = f"yr = {user_year}"
-        else:
-            if user_state != 'All':
-                where_clause = f"state LIKE '{user_state}'"
-            else:
-                where_clause = f"yr >= 2000"
-
+    def get_bar(self, user_seasons):
+        # user inputs
+        user_seasons = "All"
         # build the query
+        if user_seasons != 'All':
+            where_clause = f"seasons LIKE '{user_seasons}'"
+        else:
+            where_clause = "1 = 1"
         query = f"""
             SELECT
                 yr,
+                month,
                 state,
-                count(category) as "count"
+                category,
+                injuries,
+                fatalities,
+                seasons
             FROM
                 tornadoes
             WHERE
                 {where_clause}
-            GROUP BY
-                yr,
-                state
             ORDER BY
-                count DESC;
+                date DESC;
         """
-
+        # execute query
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)
 
-    def get_pie(self, user_year, user_state):
 
-         # switch on user_region
-        if user_year != -1:
-            if user_state != 'All':
-                where_clause = f"""yr = {user_year} 
-                AND state LIKE '{user_state}'"""
-            else:
-                where_clause = f"yr = {user_year}"
-        else:
-            if user_state != 'All':
-                where_clause = f"state LIKE '{user_state}'"
-            else:
-                where_clause = f"yr >= 2000"
+    def get_pie(self, user_seasons):
 
+        # user inputs
+        user_seasons = "All"
         # build the query
+        if user_seasons != 'All':
+            where_clause = f"seasons LIKE '{user_seasons}'"
+        else:
+            where_clause = "1 = 1"
         query = f"""
             SELECT
                 yr,
+                month,
                 state,
-                count(category) as "count"
+                category,
+                injuries,
+                fatalities,
+                seasons
             FROM
                 tornadoes
             WHERE
                 {where_clause}
-            GROUP BY
-                yr,
-                state
             ORDER BY
-                count DESC;
+                date DESC;
         """
-
+        # execute query
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)
 
-    def get_table(self, user_year, user_state):
 
-        # switch on user_region
-        if user_year != -1:
-            if user_state != 'All':
-                where_clause = f"""yr = {user_year} 
-                AND state LIKE '{user_state}'"""
-            else:
-                where_clause = f"yr = {user_year}"
-        else:
-            if user_state != 'All':
-                where_clause = f"state LIKE '{user_state}'"
-            else:
-                where_clause = f"yr >= 2000"
+    def get_table(self, user_seasons):
 
+        # user inputs
+        user_seasons = "All"
         # build the query
+        if user_seasons != 'All':
+            where_clause = f"seasons LIKE '{user_seasons}'"
+        else:
+            where_clause = "1 = 1"
         query = f"""
             SELECT
                 yr,
+                month,
                 state,
-                count(category) as "count"
+                category,
+                injuries,
+                fatalities,
+                seasons
             FROM
                 tornadoes
             WHERE
                 {where_clause}
-            GROUP BY
-                yr,
-                state
             ORDER BY
-                count DESC;
+                date DESC;
         """
-
+        # execute query
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)
+
 
     def get_map(self, year):
 
