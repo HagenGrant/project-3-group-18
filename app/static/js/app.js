@@ -1,6 +1,6 @@
 function do_work() {
   // extract user input
-  let season = d3.select("season_filter").property("value");
+  let season = d3.select("#seasons_filter").property("value");
   
   // We need to make a request to the API
   let url = `/api/v1.0/get_dashboard/${season}`;
@@ -17,7 +17,7 @@ function do_work() {
 
 function make_table(filtered_data) {
   // select table
-  let table = d3.select("data_table");
+  let table = d3.select("#data_table");
   let table_body = table.select("tbody");
   table_body.html(""); // destroy any existing rows
 
@@ -29,11 +29,13 @@ function make_table(filtered_data) {
     // creates new row in the table
     let row = table_body.append("tr");
     row.append("td").text(data_row.yr);
+    row.append("td").text(data_row.seasons);
     row.append("td").text(data_row.month);
     row.append("td").text(data_row.state);
     row.append("td").text(data_row.category);
     row.append("td").text(data_row.injuries);
     row.append("td").text(data_row.fatalities);
+    
   }
 }
 
@@ -70,10 +72,9 @@ function make_bar(filtered_data) {
   filtered_data.sort((a, b) => (b.seasons - a.seasons));
 
   // extract the x & y values for our bar chart
-  let bar_x = filtered_data.map(x => x.category);
-  let bar_text = filtered_data.map(x => x.full_name);
-  let bar_y1 = filtered_data.map(x => x.seasons);
-  let bar_y2 = filtered_data.map(x => x.yr);
+  let bar_x = filtered_data.map(x => `cat ${x.category}`);
+  let bar_y1 = filtered_data.map(x => x.fatalities);
+  let bar_y2 = filtered_data.map(x => x.injuries);
 
   // Trace1 for the Seasons
   let trace1 = {
@@ -83,8 +84,8 @@ function make_bar(filtered_data) {
     marker: {
       color: "skyblue"
     },
-    text: bar_text,
-    name: "Seasons"
+    bar_text: bar_y1,
+    name: "Fatalities"
   };
 
   // Trace 2 for the Casualties 
@@ -95,8 +96,7 @@ function make_bar(filtered_data) {
     marker: {
       color: "firebrick"
     },
-    text: bar_text,
-    name: "Casualties"
+    name: "Injuries"
   };
 
   // Create data array

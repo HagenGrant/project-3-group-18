@@ -1,4 +1,4 @@
-function createMap(data) {
+function createMap(data, geo_data) {
   // STEP 1: Init the Base Layers
 
   // Define variables for our tile layers.
@@ -38,6 +38,8 @@ function createMap(data) {
     blur: 1
   });
 
+  let geo_layer = L.geoJSON(geo_data);
+
   // Step 3: BUILD the Layer Controls
 
   // Only one base layer can be shown at a time.
@@ -48,7 +50,8 @@ function createMap(data) {
 
   let overlayLayers = {
     Markers: markers,
-    Heatmap: heatLayer
+    Heatmap: heatLayer,
+    GeoLayer: geo_layer
   }
 
   // Step 4: INIT the Map
@@ -78,10 +81,13 @@ function do_work() {
 
   // We need to make a request to the API
   let url = `/api/map/${year}`;
+  let url2 = "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json";
 
   // make request
   d3.json(url).then(function (data) {
-    createMap(data);
+    d3.json(url2).then(function (geo_data) {
+      createMap(data, geo_data);
+    });
   });
 }
 
