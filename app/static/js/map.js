@@ -2,7 +2,6 @@
 // Can I render a basic base map? - Set up Leaflet correctly
 // Can we fetch the data that we need to plot?
 
-
 function createMap(data) {
   // STEP 1: Init the Base Layers
 
@@ -23,7 +22,6 @@ function createMap(data) {
     let row = data[i];
     let latitude = row.end_latitude;
     let longitude = row.end_longitude;
-    let width = row.width
 
     // extract coord
     let point = [latitude, longitude];
