@@ -46,6 +46,8 @@ function make_pie(filtered_data) {
   // Extract Data
   let pie_data = filtered_data.map(x => x.loss);
   let pie_labels = filtered_data.map(x => `cat ${x.category}`);
+  // Define custom colors for the pie chart slices
+  let custom_colors = [];
   // Build Trace
   let trace1 = {
     values: pie_data,
@@ -53,13 +55,20 @@ function make_pie(filtered_data) {
     type: 'pie',
     hoverinfo: 'label+percent+name',
     hole: 0.4,
-    name: "Injuries"
+    name: "Injuries",
+    marker: {
+      colors: custom_colors
+    },
+    sort: "ascending"
   }
   // Create Data Array
   let data = [trace1];
   // Apply title
   let layout = {
     title: "($) Losses by Category",
+    legend: {
+      traceorder: 'reversed'
+    }
   }
   // Plot
   Plotly.newPlot("pie_chart", data, layout);
@@ -77,7 +86,7 @@ function make_bar(filtered_data) {
     y: bar_y1,
     type: 'bar',
     marker: {
-      color: "skyblue"
+      color: "blue"
     },
     name: "Fatalities",
   };
@@ -87,7 +96,7 @@ function make_bar(filtered_data) {
     y: bar_y2,
     type: 'bar',
     marker: {
-      color: "firebrick"
+      color: "skyblue"
     },
     name: "Injuries",
   };

@@ -64,7 +64,7 @@ class SQLHelper():
             FROM
                 tornadoes
             WHERE
-                {where_clause}
+                {where_clause};
         """
 
         # Convert data into dictionary
@@ -129,9 +129,7 @@ class SQLHelper():
             FROM
                 tornadoes
             WHERE
-                {where_clause}
-            ORDER BY
-                date DESC;
+                {where_clause};
         """
 
         # Convert data into dictionary
