@@ -29,7 +29,7 @@ function createMap(data) {
 
     // make marker
     let marker = L.marker(point);
-    let popup = `<h1>${row.category}</h1><hr><h2>${row.loss}</h2><hr><h3>${row.yr} | ${row.width}</h3>`;
+    let popup = `<h1>${row.category}</h1><hr><h3>${row.yr} | ${row.width}</h3>`;
     marker.bindPopup(popup);
     markers.addLayer(marker);
 
@@ -84,7 +84,7 @@ function do_work() {
   // We need to make a request to the API
   let url = `/api/map/${year}`;
 
-  // make TWO requests
+  // make request
   d3.json(url).then(function (data) {
     createMap(data);
   });
