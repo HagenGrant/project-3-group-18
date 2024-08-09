@@ -1,37 +1,34 @@
 function do_work() {
-  
-  // extract user input
+  // User Input
   let season = d3.select("#seasons_filter").property("value");
-  
-  // We need to make a request to the API
+  // API Request
   let url = `/api/v1.0/get_dashboard/${season}`;
   d3.json(url).then(function (data) {
-
-    // create the graphs
+    // Make Visuals
     make_bar(data.bar_data);
     make_pie(data.pie_data);
     make_table(data.table_data);
-    
-    // error handling
+    // Error Handling
   }).catch(function(error) {
     console.error('Error fetching data:', error);
   });
 }
 
-function make_table(filtered_data) {
 
-  // select table
+
+// Visualizations Functions
+
+// Table Function
+function make_table(filtered_data) {
+  // Select table from html
   let table = d3.select("#data_table");
   let table_body = table.select("tbody");
-  // destroy any existing rows
+  // Destroy any existing rows
   table_body.html(""); 
-
-  // create table
+  // Create Table
   for (let i = 0; i < filtered_data.length; i++){
-    // get data row
     let data_row = filtered_data[i];
-
-    // creates new row in the table
+    // Append information to our table
     let row = table_body.append("tr");
     row.append("td").text(data_row.yr);
     row.append("td").text(data_row.seasons);
@@ -44,14 +41,12 @@ function make_table(filtered_data) {
   }
 }
 
+// Pie Function
 function make_pie(filtered_data) {
-  // sort values
-  filtered_data.sort((a, b) => (b.loss - a.loss));
-
-  // extract data for pie chart
+  // Extract Data
   let pie_data = filtered_data.map(x => x.loss);
   let pie_labels = filtered_data.map(x => `cat ${x.category}`);
-
+  // Build Trace
   let trace1 = {
     values: pie_data,
     labels: pie_labels,
@@ -60,27 +55,22 @@ function make_pie(filtered_data) {
     hole: 0.4,
     name: "Injuries"
   }
-
-  // Create data array
+  // Create Data Array
   let data = [trace1];
-
-  // Apply a title to the layout
+  // Apply title
   let layout = {
     title: "($) Losses by Category",
   }
-
+  // Plot
   Plotly.newPlot("pie_chart", data, layout);
 }
 
+// Bar Function
 function make_bar(filtered_data) {
-  // sort values
-  filtered_data.sort((a, b) => (b.seasons - a.seasons));
-
-  // extract the x & y values for our bar chart
+  // Extract the x & y values for our bar chart
   let bar_x = filtered_data.map(x => `cat ${x.category}`);
   let bar_y1 = filtered_data.map(x => x.fatalities);
   let bar_y2 = filtered_data.map(x => x.injuries);
-
   // Trace1 for the Fatalities
   let trace1 = {
     x: bar_x,
@@ -91,7 +81,6 @@ function make_bar(filtered_data) {
     },
     name: "Fatalities",
   };
-
   // Trace 2 for the Injuries 
   let trace2 = {
     x: bar_x,
@@ -102,15 +91,13 @@ function make_bar(filtered_data) {
     },
     name: "Injuries",
   };
-
-  // Create data array
+  // Create Data Array
   let data = [trace1, trace2];
-
   // Apply a title to the layout
   let layout = {
     title: "Injuries & Fatalities by Category",
     barmode: "group",
-    // Include margins in the layout so the x-tick labels display correctly
+    // Include margins so the x-tick labels display correctly
     margin: {
       l: 50,
       r: 50,
@@ -119,15 +106,16 @@ function make_bar(filtered_data) {
       pad: 4
     }
   };
-
   // Render the plot to the div tag with id "bar_chart"
   Plotly.newPlot("bar_chart", data, layout);
 }
 
-// event listener for CLICK on Button
+
+
+// Event Listener for CLICK on Button
 d3.select("#filter").on("click", do_work);
 
-// on page load, don't wait for the click to make the graph, use default
+// On page load, don't wait for the click to make the graph, use default
 document.addEventListener("DOMContentLoaded", function() {
   do_work();
 });
