@@ -23,7 +23,7 @@ class SQLHelper():
 
     def get_bar(self, user_seasons):
         # user inputs
-        user_seasons = "All"
+       # user_seasons = "All"
         # build the query
         if user_seasons != 'All':
             where_clause = f"seasons LIKE '{user_seasons}'"

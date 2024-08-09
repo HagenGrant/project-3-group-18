@@ -1,6 +1,6 @@
 function do_work() {
   // extract user input
-  let season = d3.select("#season_filter").property("id");
+  let season = d3.select("season_filter").property("value");
   
   // We need to make a request to the API
   let url = `/api/v1.0/get_dashboard/${season}`;
@@ -9,13 +9,15 @@ function do_work() {
     // create the graphs
     make_bar(data.bar_data);
     make_pie(data.pie_data);
-    make_table(data.table_data)
+    make_table(data.table_data);
+  }).catch(function(error) {
+    console.error('Error fetching data:', error);
   });
 }
 
 function make_table(filtered_data) {
   // select table
-  let table = d3.select("#data_table");
+  let table = d3.select("data_table");
   let table_body = table.select("tbody");
   table_body.html(""); // destroy any existing rows
 
@@ -26,24 +28,22 @@ function make_table(filtered_data) {
 
     // creates new row in the table
     let row = table_body.append("tr");
-    row.append("td").text(data_row.name);
-    row.append("td").text(data_row.full_name);
-    row.append("td").text(data_row.region);
-    row.append("td").text(data_row.latitude);
-    row.append("td").text(data_row.longitude);
-    row.append("td").text(data_row.launch_attempts);
-    row.append("td").text(data_row.launch_successes);
-    row.append("td").text(data_row.launch_attempts - data_row.launch_successes);
+    row.append("td").text(data_row.yr);
+    row.append("td").text(data_row.month);
+    row.append("td").text(data_row.state);
+    row.append("td").text(data_row.category);
+    row.append("td").text(data_row.injuries);
+    row.append("td").text(data_row.fatalities);
   }
 }
 
 function make_pie(filtered_data) {
   // sort values
-  filtered_data.sort((a, b) => (b.launch_attempts - a.launch_attempts));
+  filtered_data.sort((a, b) => (b.injuries - a.injuries));
 
   // extract data for pie chart
-  let pie_data = filtered_data.map(x => x.launch_attempts);
-  let pie_labels = filtered_data.map(x => x.name);
+  let pie_data = filtered_data.map(x => x.injuries);
+  let pie_labels = filtered_data.map(x => x.category);
 
   let trace1 = {
     values: pie_data,
@@ -51,7 +51,7 @@ function make_pie(filtered_data) {
     type: 'pie',
     hoverinfo: 'label+percent+name',
     hole: 0.4,
-    name: "Attempts"
+    name: "Injuries"
   }
 
   // Create data array
@@ -59,7 +59,7 @@ function make_pie(filtered_data) {
 
   // Apply a title to the layout
   let layout = {
-    title: "SpaceX Launch Attempts",
+    title: "Tornado Info",
   }
 
   Plotly.newPlot("pie_chart", data, layout);
@@ -67,15 +67,15 @@ function make_pie(filtered_data) {
 
 function make_bar(filtered_data) {
   // sort values
-  filtered_data.sort((a, b) => (b.launch_attempts - a.launch_attempts));
+  filtered_data.sort((a, b) => (b.seasons - a.seasons));
 
   // extract the x & y values for our bar chart
-  let bar_x = filtered_data.map(x => x.name);
+  let bar_x = filtered_data.map(x => x.category);
   let bar_text = filtered_data.map(x => x.full_name);
-  let bar_y1 = filtered_data.map(x => x.launch_attempts);
-  let bar_y2 = filtered_data.map(x => x.launch_successes);
+  let bar_y1 = filtered_data.map(x => x.seasons);
+  let bar_y2 = filtered_data.map(x => x.yr);
 
-  // Trace1 for the Launch Attempts
+  // Trace1 for the Seasons
   let trace1 = {
     x: bar_x,
     y: bar_y1,
@@ -84,10 +84,10 @@ function make_bar(filtered_data) {
       color: "skyblue"
     },
     text: bar_text,
-    name: "Attempts"
+    name: "Seasons"
   };
 
-  // Trace 2 for the Launch Successes
+  // Trace 2 for the Casualties 
   let trace2 = {
     x: bar_x,
     y: bar_y2,
@@ -96,7 +96,7 @@ function make_bar(filtered_data) {
       color: "firebrick"
     },
     text: bar_text,
-    name: "Successes"
+    name: "Casualties"
   };
 
   // Create data array
@@ -104,7 +104,7 @@ function make_bar(filtered_data) {
 
   // Apply a title to the layout
   let layout = {
-    title: "SpaceX Launch Results",
+    title: "Tornado Results",
     barmode: "group",
     // Include margins in the layout so the x-tick labels display correctly
     margin: {
@@ -116,13 +116,14 @@ function make_bar(filtered_data) {
     }
   };
 
-  // Render the plot to the div tag with id "plot"
+  // Render the plot to the div tag with id "bar_chart"
   Plotly.newPlot("bar_chart", data, layout);
-
 }
 
 // event listener for CLICK on Button
 d3.select("#filter").on("click", do_work);
 
 // on page load, don't wait for the click to make the graph, use default
-do_work();
+document.addEventListener("DOMContentLoaded", function() {
+  do_work();
+});
