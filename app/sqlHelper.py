@@ -32,8 +32,6 @@ class SQLHelper():
         query = f"""
             SELECT
                 yr,
-                month,
-                state,
                 category,
                 injuries,
                 fatalities,
@@ -43,7 +41,7 @@ class SQLHelper():
             WHERE
                 {where_clause}
             ORDER BY
-                date DESC;
+                category ASC;
         """
         # execute query
         df = pd.read_sql(text(query), con = self.engine)
@@ -63,11 +61,8 @@ class SQLHelper():
         query = f"""
             SELECT
                 yr,
-                month,
-                state,
+                loss,
                 category,
-                injuries,
-                fatalities,
                 seasons
             FROM
                 tornadoes

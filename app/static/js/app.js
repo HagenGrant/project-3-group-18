@@ -41,11 +41,11 @@ function make_table(filtered_data) {
 
 function make_pie(filtered_data) {
   // sort values
-  filtered_data.sort((a, b) => (b.injuries - a.injuries));
+  filtered_data.sort((a, b) => (b.loss - a.loss));
 
   // extract data for pie chart
-  let pie_data = filtered_data.map(x => x.injuries);
-  let pie_labels = filtered_data.map(x => x.category);
+  let pie_data = filtered_data.map(x => x.loss);
+  let pie_labels = filtered_data.map(x => `cat ${x.category}`);
 
   let trace1 = {
     values: pie_data,
@@ -61,7 +61,7 @@ function make_pie(filtered_data) {
 
   // Apply a title to the layout
   let layout = {
-    title: "Tornado Info",
+    title: "($) Losses by Category",
   }
 
   Plotly.newPlot("pie_chart", data, layout);
@@ -76,7 +76,7 @@ function make_bar(filtered_data) {
   let bar_y1 = filtered_data.map(x => x.fatalities);
   let bar_y2 = filtered_data.map(x => x.injuries);
 
-  // Trace1 for the Seasons
+  // Trace1 for the Fatalities
   let trace1 = {
     x: bar_x,
     y: bar_y1,
@@ -84,11 +84,10 @@ function make_bar(filtered_data) {
     marker: {
       color: "skyblue"
     },
-    bar_text: bar_y1,
-    name: "Fatalities"
+    name: "Fatalities",
   };
 
-  // Trace 2 for the Casualties 
+  // Trace 2 for the Injuries 
   let trace2 = {
     x: bar_x,
     y: bar_y2,
@@ -96,7 +95,7 @@ function make_bar(filtered_data) {
     marker: {
       color: "firebrick"
     },
-    name: "Injuries"
+    name: "Injuries",
   };
 
   // Create data array
@@ -104,7 +103,7 @@ function make_bar(filtered_data) {
 
   // Apply a title to the layout
   let layout = {
-    title: "Tornado Results",
+    title: "Injuries & Fatalities by Category",
     barmode: "group",
     // Include margins in the layout so the x-tick labels display correctly
     margin: {
