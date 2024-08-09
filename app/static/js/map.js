@@ -1,7 +1,3 @@
-// GOAL 1
-// Can I render a basic base map? - Set up Leaflet correctly
-// Can we fetch the data that we need to plot?
-
 function createMap(data) {
   // STEP 1: Init the Base Layers
 
