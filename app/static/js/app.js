@@ -30,11 +30,11 @@ function make_table(filtered_data) {
     let row = table_body.append("tr");
     row.append("td").text(data_row.yr);
     row.append("td").text(data_row.seasons);
-    row.append("td").text(data_row.month);
     row.append("td").text(data_row.state);
     row.append("td").text(data_row.category);
     row.append("td").text(data_row.injuries);
     row.append("td").text(data_row.fatalities);
+    row.append("td").text(data_row.loss);
     
   }
 }

@@ -94,11 +94,11 @@ class SQLHelper():
         query = f"""
             SELECT
                 yr,
-                month,
                 state,
                 category,
                 injuries,
                 fatalities,
+                loss,
                 seasons
             FROM
                 tornadoes
