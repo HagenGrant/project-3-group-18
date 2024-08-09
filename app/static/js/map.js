@@ -1,7 +1,10 @@
 function createMap(data, geo_data) {
+
+
+
   // STEP 1: Init the Base Layers
 
-  // Define variables for our tile layers.
+  // Tile Layers
   let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   })
@@ -10,58 +13,75 @@ function createMap(data, geo_data) {
     attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
   });
 
-  // Step 2: Create the Overlay layers
+
+
+  // Step 2: Overlay Layers
+
+  // Marker Clusters and Heat Array
   let markers = L.markerClusterGroup();
   let heatArray = [];
-
+  // Loop through data
   for (let i = 0; i < data.length; i++){
     let row = data[i];
+    // Save Lat & Long
     let latitude = row.end_latitude;
     let longitude = row.end_longitude;
-
-    // extract coord
+    // Save coordinate points
     let point = [latitude, longitude];
-
-    // make marker
+    // Make markers out of points
     let marker = L.marker(point);
-    let popup = `<h1>Category: ${row.category}</h1><hr><h3>Year: ${row.yr} <br> Damage: $${row.loss}</h3>`;
+    // Create popup
+    let popup = `<h1>Category: ${row.category}</h1><hr><h3>Damage: $${row.loss}</h3>`;
+    // Bind popups
     marker.bindPopup(popup);
+    // Add makers to layer group
     markers.addLayer(marker);
-
-    // add to heatmap
+    // Add to heatmap
     heatArray.push(point);
   }
-
-  // create layer
+  // Create heat layer
   let heatLayer = L.heatLayer(heatArray, {
     radius: 10,
     blur: 1
   });
+  // Create geo layer
+  let geo_layer = L.geoJSON(geo_data, {
+    style: function (feature) {
+        return {
+            fillColor: 'white',
+            color: 'black',
+            weight: 2,
+            opacity: .5,
+            fillOpacity: .1
+        };
+    }
+});
 
-  let geo_layer = L.geoJSON(geo_data);
 
-  // Step 3: BUILD the Layer Controls
 
-  // Only one base layer can be shown at a time.
+  // Step 3: Layer Controls
+
+  // Street & Topography base layers
   let baseLayers = {
     Street: street,
     Topography: topo
   };
-
+  // Additional overlays
   let overlayLayers = {
     Markers: markers,
     Heatmap: heatLayer,
     GeoLayer: geo_layer
   }
 
-  // Step 4: INIT the Map
+
+
+  // Step 4: Initialize the map
 
   // Destroy the old map
   d3.select("#map-container").html("");
-
-  // rebuild the map
+  // Select map container from html
   d3.select("#map-container").html("<div id='map'></div>");
-
+  // Default map settings
   let myMap = L.map("map", {
     center: [38, -96],
     zoom: 5,
@@ -69,21 +89,23 @@ function createMap(data, geo_data) {
   });
 
 
-  // Step 5: Add the Layer Control filter + legends as needed
+
+  // Step 5: Add the Layer Control filter as needed
   L.control.layers(baseLayers, overlayLayers).addTo(myMap);
 
 }
 
+
+
+// API request function
 function do_work() {
-  // extract user input
+  // Extract user input
   let year = d3.select("#year_filter").property("value");
   year = parseInt(year);
-
-  // We need to make a request to the API
+  // We need to make a request to the APIs
   let url = `/api/map/${year}`;
   let url2 = "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json";
-
-  // make request
+  // Nested request
   d3.json(url).then(function (data) {
     d3.json(url2).then(function (geo_data) {
       createMap(data, geo_data);
@@ -91,7 +113,8 @@ function do_work() {
   });
 }
 
-// event listener for CLICK on Button
-d3.select("#filter").on("click", do_work);
 
+
+// Event listener for CLICK on Button
+d3.select("#filter").on("click", do_work);
 do_work();
