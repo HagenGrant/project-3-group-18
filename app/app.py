@@ -36,11 +36,9 @@ def about_us():
 # Dashboard SQL Query
 @app.route("/api/v1.0/get_dashboard/<user_seasons>")
 def get_dashboard(user_seasons):
-
     bar_data = sql.get_bar(user_seasons)
     pie_data = sql.get_pie(user_seasons)
     table_data = sql.get_table(user_seasons)
-
     data = {
         "bar_data": bar_data,
         "pie_data": pie_data,
@@ -53,7 +51,6 @@ def get_dashboard(user_seasons):
 def get_map(year):
     year = int(year)
     map_data = sql.get_map(year)
-
     return(jsonify(map_data))
 
 # Run the App
