@@ -1,4 +1,5 @@
 function do_work() {
+  
   // extract user input
   let season = d3.select("#seasons_filter").property("value");
   
@@ -10,16 +11,20 @@ function do_work() {
     make_bar(data.bar_data);
     make_pie(data.pie_data);
     make_table(data.table_data);
+    
+    // error handling
   }).catch(function(error) {
     console.error('Error fetching data:', error);
   });
 }
 
 function make_table(filtered_data) {
+
   // select table
   let table = d3.select("#data_table");
   let table_body = table.select("tbody");
-  table_body.html(""); // destroy any existing rows
+  // destroy any existing rows
+  table_body.html(""); 
 
   // create table
   for (let i = 0; i < filtered_data.length; i++){

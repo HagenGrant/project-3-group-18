@@ -1,6 +1,5 @@
+# Imports
 import sqlalchemy
-# from sqlalchemy.ext.automap import automap_base
-# from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, text, func
 import datetime
 
@@ -9,33 +8,32 @@ import numpy as np
 
 # The Purpose of this Class is to separate out any Database logic
 class SQLHelper():
-    #################################################
-    # Database Setup
-    #################################################
 
-    # define properties
+    # Database Setup
+    # Define Properties
     def __init__(self):
         self.engine = create_engine("sqlite:///tornadoes_clean.sqlite")
 
-    #################################################
+    ##################
     # Database Queries
-    #################################################
+    ##################
 
+    # Bar Graph Query
     def get_bar(self, user_seasons):
-        # user inputs
-       # user_seasons = "All"
-        # build the query
+
+        # User Input
         if user_seasons != 'All':
             where_clause = f"seasons LIKE '{user_seasons}'"
         else:
             where_clause = "1 = 1"
+
+        # Query
         query = f"""
             SELECT
                 yr,
                 category,
                 injuries,
-                fatalities,
-                seasons
+                fatalities
             FROM
                 tornadoes
             WHERE
@@ -43,80 +41,79 @@ class SQLHelper():
             ORDER BY
                 category ASC;
         """
-        # execute query
+
+        # Convert data into dictionary
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)
 
-
+    # Pie Graph Query
     def get_pie(self, user_seasons):
 
-        # user inputs
-        user_seasons = "All"
-        # build the query
+        # User Input
         if user_seasons != 'All':
             where_clause = f"seasons LIKE '{user_seasons}'"
         else:
             where_clause = "1 = 1"
+
+        # Query
         query = f"""
             SELECT
-                yr,
                 loss,
-                category,
-                seasons
+                category
             FROM
                 tornadoes
             WHERE
                 {where_clause}
-            ORDER BY
-                date DESC;
         """
-        # execute query
+
+        # Convert data into dictionary
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)
 
-
+    # Data Table Query
     def get_table(self, user_seasons):
 
-        # user inputs
-        user_seasons = "All"
-        # build the query
+        # User Input
         if user_seasons != 'All':
             where_clause = f"seasons LIKE '{user_seasons}'"
         else:
             where_clause = "1 = 1"
+
+        # Query
         query = f"""
             SELECT
                 yr,
+                seasons,
                 state,
                 category,
                 injuries,
                 fatalities,
-                loss,
-                seasons
+                loss
             FROM
                 tornadoes
             WHERE
                 {where_clause}
             ORDER BY
-                date DESC;
+                category DESC;
         """
-        # execute query
+
+        # Convert data into dictionary
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)
 
-
+    # Map Query
     def get_map(self, year):
-
-        # switch on user_year
+        
+        # User Input
         if year != -1:
             where_clause = f"yr = {year}"
         else:
             where_clause = f"yr > 2000"
 
-        # build the query
+        # Query
         query = f"""
             SELECT
                 yr,
@@ -137,6 +134,7 @@ class SQLHelper():
                 date DESC;
         """
 
+        # Convert data into dictionary
         df = pd.read_sql(text(query), con = self.engine)
         data = df.to_dict(orient="records")
         return(data)

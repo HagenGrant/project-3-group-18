@@ -33,7 +33,7 @@ def map():
 def about_us():
     return render_template("about_us.html")
 
-# SQL Queries
+# Dashboard SQL Query
 @app.route("/api/v1.0/get_dashboard/<user_seasons>")
 def get_dashboard(user_seasons):
 
@@ -48,14 +48,13 @@ def get_dashboard(user_seasons):
     }
     return(jsonify(data))
 
+# Map SQL Query
 @app.route("/api/map/<year>")
 def get_map(year):
-    year = int(year) # cast to int
+    year = int(year)
     map_data = sql.get_map(year)
 
     return(jsonify(map_data))
-
-
 
 # Run the App
 if __name__ == '__main__':
