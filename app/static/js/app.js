@@ -20,6 +20,8 @@ function do_work() {
 
 // Table Function
 function make_table(filtered_data) {
+  // re-init the datatable
+  $('#data_table').DataTable().clear().destroy();
   // Select table from html
   let table = d3.select("#data_table");
   let table_body = table.select("tbody");
@@ -39,6 +41,10 @@ function make_table(filtered_data) {
     row.append("td").text(data_row.loss);
     
   }
+
+  // Create the datatable
+  $('#data_table').DataTable();
+  
 }
 
 // Pie Function
