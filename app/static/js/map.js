@@ -1,3 +1,27 @@
+// Custom named function
+function chooseColor(category) {
+  console.log(category)
+    // colors
+    if (category === 0) {
+      color = "orange";
+    } else if (category === 1) {
+      color = "black";
+    } else if (category === 2) {
+      color = "blue";
+    } else if (category === 3) {
+      color = "red";
+    } else if (category === 4) {
+      color = "purple";
+    } else if (category === 5) {
+      color = "yellow";
+    } else {
+      color = "black";
+    }
+     // return color
+  return (color);
+}
+
+
 function createMap(data, geo_data) {
 
 
@@ -20,6 +44,7 @@ function createMap(data, geo_data) {
   // Marker Clusters and Heat Array
   let markers = L.markerClusterGroup();
   let heatArray = [];
+  let circleArray = [];
   // Loop through data
   for (let i = 0; i < data.length; i++){
     let row = data[i];
@@ -38,12 +63,23 @@ function createMap(data, geo_data) {
     markers.addLayer(marker);
     // Add to heatmap
     heatArray.push(point);
+    // Create circles
+    let circleMarker = L.circle(point, {
+      fillOpacity: 5,
+      color: chooseColor(row.category),
+      fillColor: chooseColor(row.category),
+      radius: row.category ** 8
+    }).bindPopup(popup);
+    circleArray.push(circleMarker);
+    
   }
   // Create heat layer
   let heatLayer = L.heatLayer(heatArray, {
     radius: 10,
     blur: 1
   });
+  // Circle layer
+  let circleLayer = L.layerGroup(circleArray);
   // Create geo layer
   let geo_layer = L.geoJSON(geo_data, {
     style: function (feature) {
@@ -70,7 +106,8 @@ function createMap(data, geo_data) {
   let overlayLayers = {
     Markers: markers,
     Heatmap: heatLayer,
-    GeoLayer: geo_layer
+    GeoLayer: geo_layer,
+    CircleLayer: circleLayer
   }
 
 
@@ -92,6 +129,24 @@ function createMap(data, geo_data) {
 
   // Step 5: Add the Layer Control filter as needed
   L.control.layers(baseLayers, overlayLayers).addTo(myMap);
+
+  // Step 6: Legend
+  let legend = L.control({ position: "bottomright" });
+  legend.onAdd = function() {
+    let div = L.DomUtil.create("div", "info legend");
+    let legendInfo = "<h4>Circle Layer Legend</h4></br>"
+    legendInfo += "<i style='background: #FFA500'></i>Category 0<br></br>";
+    legendInfo += "<i style='background: #000000'></i>Category 1<br></br>";
+    legendInfo += "<i style='background: #0000FF'></i>Category 2<br></br>";
+    legendInfo += "<i style='background: #FF0000'></i>Category 3<br></br>";
+    legendInfo += "<i style='background: #800080'></i>Category 4<br></br>";
+    legendInfo += "<i style='background: #008000'></i>Category 5<br></br>";
+    div.innerHTML = legendInfo;
+    return div;
+  };
+// Adding the legend to the map
+legend.addTo(myMap);
+
 
 }
 
