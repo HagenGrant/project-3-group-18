@@ -76,8 +76,8 @@ function createMap(data, geo_data) {
   // Create heat layer
   let heatLayer = L.heatLayer(heatArray, {
     gradient: {0.3: 'red'},
-    radius: 10,
-    blur: 1
+    radius: 25,
+    blur: 5
   });
   // Circle layer
   let circleLayer = L.layerGroup(circleArray);
