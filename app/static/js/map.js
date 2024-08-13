@@ -57,6 +57,7 @@ function createMap(data, geo_data) {
     let marker = L.marker(point);
     // Create popup
     let popup = `<h1>Category: ${row.category}</h1><hr><h3>Damage: $${row.loss}</h3>`;
+    let popup2 = `<h1>Distance Traveled: ${row.distance_traveled}mi</h1><h3>Width: ${row.width}yds</h3>`
     // Bind popups
     marker.bindPopup(popup);
     // Add makers to layer group
@@ -68,8 +69,8 @@ function createMap(data, geo_data) {
       fillOpacity: 5,
       color: chooseColor(row.category),
       fillColor: chooseColor(row.category),
-      radius: row.category ** 8
-    }).bindPopup(popup);
+      radius: row.width * 10
+    }).bindPopup(popup2);
     circleArray.push(circleMarker);
     
   }
